@@ -1,0 +1,67 @@
+-- Create the UI
+local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "SupermePrivateExec"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 250, 0, 150)
+Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 25)
+Title.BackgroundTransparency = 1
+Title.Text = "Superme Private Exec"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+
+local TextBox = Instance.new("TextBox", Frame)
+TextBox.Position = UDim2.new(0, 5, 0, 30)
+TextBox.Size = UDim2.new(1, -10, 0, 80)
+TextBox.Text = "-- Enter script here"
+TextBox.TextWrapped = true
+TextBox.TextColor3 = Color3.new(1, 1, 1)
+TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TextBox.ClearTextOnFocus = false
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+TextBox.TextYAlignment = Enum.TextYAlignment.Top
+TextBox.Font = Enum.Font.Code
+TextBox.TextSize = 14
+TextBox.MultiLine = true
+
+local ExecuteButton = Instance.new("TextButton", Frame)
+ExecuteButton.Position = UDim2.new(0, 10, 1, -35)
+ExecuteButton.Size = UDim2.new(0, 100, 0, 30)
+ExecuteButton.Text = "Execute"
+ExecuteButton.Font = Enum.Font.SourceSansBold
+ExecuteButton.TextSize = 16
+ExecuteButton.TextColor3 = Color3.new(1, 1, 1)
+ExecuteButton.BackgroundColor3 = Color3.fromRGB(40, 100, 40)
+
+local ClearButton = Instance.new("TextButton", Frame)
+ClearButton.Position = UDim2.new(1, -110, 1, -35)
+ClearButton.Size = UDim2.new(0, 100, 0, 30)
+ClearButton.Text = "Clear"
+ClearButton.Font = Enum.Font.SourceSansBold
+ClearButton.TextSize = 16
+ClearButton.TextColor3 = Color3.new(1, 1, 1)
+ClearButton.BackgroundColor3 = Color3.fromRGB(100, 40, 40)
+
+-- Execute script
+ExecuteButton.MouseButton1Click:Connect(function()
+	local source = TextBox.Text
+	local func, err = loadstring(source)
+	if func then
+		pcall(func)
+	else
+		warn("Script Error:", err)
+	end
+end)
+
+-- Clear script
+ClearButton.MouseButton1Click:Connect(function()
+	TextBox.Text = ""
+end)
