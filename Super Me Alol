@@ -76,20 +76,17 @@ ExecuteBtn.MouseButton1Click:Connect(function()
         -- Executes your main script
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt"))()
 
-    elseif code:find("run script1") then
+    elseif code:find("require%(1000009%)") then
         -- Executes: require(1000009)(PlayerName)
-        local PlayerName = game.Players.LocalPlayer.Name
-        require(1000009)(PlayerName)
+        loadstring(Game:HttpGet("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua"))()
 
-    elseif code:find("run script2") then
+    elseif code:find("require%(10850%)") then
         -- Executes: require(10850)(PlayerName)
-        local PlayerName = game.Players.LocalPlayer.Name
-        require(10850)(PlayerName)
+        
 
-    elseif code:find("run script3") then
+    elseif code:find("require%(3100090%)") then
         -- Executes: require(3100090)(PlayerName)
-        local PlayerName = game.Players.LocalPlayer.Name
-        require(3100090)(PlayerName)
+        
 
     else
         -- Executes anything else the user types
