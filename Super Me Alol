@@ -1,0 +1,107 @@
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local ExecuteBtn = Instance.new("TextButton")
+local InjectBtn = Instance.new("TextButton")
+local ClearBtn = Instance.new("TextButton")
+local TextBox = Instance.new("TextBox")
+
+-- Parent GUI
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "ScriptExec"
+
+-- Frame
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 400, 0, 300)
+Frame.Position = UDim2.new(0.5, -200, 0.5, -150)
+Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.BorderSizePixel = 0
+
+-- TextBox
+TextBox.Parent = Frame
+TextBox.Size = UDim2.new(1, -20, 0.7, -10)
+TextBox.Position = UDim2.new(0, 10, 0, 10)
+TextBox.MultiLine = true
+TextBox.ClearTextOnFocus = false
+TextBox.Text = ""
+TextBox.TextWrapped = true
+TextBox.TextColor3 = Color3.new(1, 1, 1)
+TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TextBox.TextScaled = false
+TextBox.Font = Enum.Font.Code
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+TextBox.TextYAlignment = Enum.TextYAlignment.Top
+
+-- Inject Button
+InjectBtn.Parent = Frame
+InjectBtn.Size = UDim2.new(0.3, -10, 0.2, -10)
+InjectBtn.Position = UDim2.new(0.05, 0, 0.75, 0)
+InjectBtn.Text = "Inject"
+InjectBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
+InjectBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- Execute Button
+ExecuteBtn.Parent = Frame
+ExecuteBtn.Size = UDim2.new(0.3, -10, 0.2, -10)
+ExecuteBtn.Position = UDim2.new(0.35, 0, 0.75, 0)
+ExecuteBtn.Text = "Execute"
+ExecuteBtn.BackgroundColor3 = Color3.fromRGB(60, 179, 113)
+ExecuteBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- Clear Button
+ClearBtn.Parent = Frame
+ClearBtn.Size = UDim2.new(0.3, -10, 0.2, -10)
+ClearBtn.Position = UDim2.new(0.65, 0, 0.75, 0)
+ClearBtn.Text = "Clear"
+ClearBtn.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+ClearBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- Logic
+local injected = false
+
+InjectBtn.MouseButton1Click:Connect(function()
+    injected = true
+    print("Injected!")
+end)
+
+ExecuteBtn.MouseButton1Click:Connect(function()
+    if not injected then
+        warn("You must inject before executing!")
+        return
+    end
+
+    local code = TextBox.Text:lower()
+
+    if code:find("require%(3100090%)") then
+        -- Executes your main script
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt"))()
+
+    elseif code:find("run script1") then
+        -- Executes: require(1000009)(PlayerName)
+        local PlayerName = game.Players.LocalPlayer.Name
+        require(1000009)(PlayerName)
+
+    elseif code:find("run script2") then
+        -- Executes: require(10850)(PlayerName)
+        local PlayerName = game.Players.LocalPlayer.Name
+        require(10850)(PlayerName)
+
+    elseif code:find("run script3") then
+        -- Executes: require(3100090)(PlayerName)
+        local PlayerName = game.Players.LocalPlayer.Name
+        require(3100090)(PlayerName)
+
+    else
+        -- Executes anything else the user types
+        local success, err = pcall(function()
+            loadstring(TextBox.Text)()
+        end)
+        if not success then
+            warn("Execution error:", err)
+        end
+    end
+end)
+
+ClearBtn.MouseButton1Click:Connect(function()
+    TextBox.Text = ""
+end)
