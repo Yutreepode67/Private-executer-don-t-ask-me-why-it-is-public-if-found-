@@ -1,29 +1,51 @@
 -- GUI Setup
+local player = game.Players.LocalPlayer
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local ExecuteBtn = Instance.new("TextButton")
 local InjectBtn = Instance.new("TextButton")
 local ClearBtn = Instance.new("TextButton")
 local TextBox = Instance.new("TextBox")
+local KeyInput = Instance.new("TextBox")
+local VerifyKeyBtn = Instance.new("TextButton")
 
 -- Parent GUI
-ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "FeBypass🤑🤑🤑"
+ScreenGui.Name = "FeBypass"
+ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
 -- Frame
 Frame.Parent = ScreenGui
-Frame.Size = UDim2.new(0, 400, 0, 300)
-Frame.Position = UDim2.new(0.5, -200, 0.5, -150)
+Frame.Size = UDim2.new(0, 400, 0, 330)
+Frame.Position = UDim2.new(0.5, -200, 0.5, -165)
 Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 Frame.BorderSizePixel = 0
-Frame.Active = true -- Needed for dragging
-Frame.Draggable = true -- Make it draggable
+Frame.Active = true
+
+-- Simple dragging logic
+local dragging, offset
+Frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		offset = input.Position - Frame.Position
+	end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		Frame.Position = UDim2.new(0, input.Position.X - offset.X.Offset, 0, input.Position.Y - offset.Y.Offset)
+	end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
 
 -- TextBox
 TextBox.Parent = Frame
 TextBox.Size = UDim2.new(1, -20, 0.7, -10)
 TextBox.Position = UDim2.new(0, 10, 0, 10)
-TextBox.MultiLine = true
 TextBox.ClearTextOnFocus = false
 TextBox.Text = ""
 TextBox.TextWrapped = true
@@ -34,9 +56,28 @@ TextBox.Font = Enum.Font.Code
 TextBox.TextXAlignment = Enum.TextXAlignment.Left
 TextBox.TextYAlignment = Enum.TextYAlignment.Top
 
+-- Key Input
+KeyInput.Parent = Frame
+KeyInput.Size = UDim2.new(0.6, -10, 0.1, 0)
+KeyInput.Position = UDim2.new(0.05, 0, 0.87, 0)
+KeyInput.PlaceholderText = "Enter access key..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+KeyInput.Font = Enum.Font.Code
+KeyInput.TextScaled = true
+
+-- Verify Key Button
+VerifyKeyBtn.Parent = Frame
+VerifyKeyBtn.Size = UDim2.new(0.3, -10, 0.1, 0)
+VerifyKeyBtn.Position = UDim2.new(0.65, 0, 0.87, 0)
+VerifyKeyBtn.Text = "Verify Key"
+VerifyKeyBtn.BackgroundColor3 = Color3.fromRGB(100, 149, 237)
+VerifyKeyBtn.TextColor3 = Color3.new(1, 1, 1)
+
 -- Inject Button
 InjectBtn.Parent = Frame
-InjectBtn.Size = UDim2.new(0.3, -10, 0.2, -10)
+InjectBtn.Size = UDim2.new(0.3, -10, 0.1, -10)
 InjectBtn.Position = UDim2.new(0.05, 0, 0.75, 0)
 InjectBtn.Text = "Inject"
 InjectBtn.BackgroundColor3 = Color3.fromRGB(70, 130, 180)
@@ -44,7 +85,7 @@ InjectBtn.TextColor3 = Color3.new(1, 1, 1)
 
 -- Execute Button
 ExecuteBtn.Parent = Frame
-ExecuteBtn.Size = UDim2.new(0.3, -10, 0.2, -10)
+ExecuteBtn.Size = UDim2.new(0.3, -10, 0.1, -10)
 ExecuteBtn.Position = UDim2.new(0.35, 0, 0.75, 0)
 ExecuteBtn.Text = "Execute"
 ExecuteBtn.BackgroundColor3 = Color3.fromRGB(60, 179, 113)
@@ -52,52 +93,82 @@ ExecuteBtn.TextColor3 = Color3.new(1, 1, 1)
 
 -- Clear Button
 ClearBtn.Parent = Frame
-ClearBtn.Size = UDim2.new(0.3, -10, 0.2, -10)
+ClearBtn.Size = UDim2.new(0.3, -10, 0.1, -10)
 ClearBtn.Position = UDim2.new(0.65, 0, 0.75, 0)
 ClearBtn.Text = "Clear"
 ClearBtn.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 ClearBtn.TextColor3 = Color3.new(1, 1, 1)
 
 -- Logic
+local correctKey = "Skidder"
+local keyVerified = false
 local injected = false
 
+-- Print the password in console
+print("Key system initialized. The password is:", correctKey)
+
+-- Disable buttons until key is verified
+InjectBtn.Active = false
+ExecuteBtn.Active = false
+InjectBtn.AutoButtonColor = false
+ExecuteBtn.AutoButtonColor = false
+
+-- Verify key logic
+VerifyKeyBtn.MouseButton1Click:Connect(function()
+	if KeyInput.Text == correctKey then
+		keyVerified = true
+		InjectBtn.Active = true
+		ExecuteBtn.Active = true
+		InjectBtn.AutoButtonColor = true
+		ExecuteBtn.AutoButtonColor = true
+		KeyInput.Visible = false
+		VerifyKeyBtn.Visible = false
+		print("Access granted. Key verified.")
+	else
+		VerifyKeyBtn.Text = "Wrong Key"
+		wait(1)
+		VerifyKeyBtn.Text = "Verify Key"
+	end
+end)
+
 InjectBtn.MouseButton1Click:Connect(function()
-    injected = true
-    print("Injected!")
+	if not keyVerified then
+		warn("Key not verified!")
+		return
+	end
+
+	injected = true
+	print("Injected!")
 end)
 
 ExecuteBtn.MouseButton1Click:Connect(function()
-    if not injected then
-        warn("You must inject before executing!")
-        return
-    end
+	if not injected then
+		warn("You must inject before executing!")
+		return
+	end
 
-    local code = TextBox.Text:lower()
+	local code = TextBox.Text:lower()
 
-    if code:find("require%(3100090%)") then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt"))()
-
-    elseif code:find("require%(1000009%)") then
-        loadstring(Game:HttpGet("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua"))()
-
-    elseif code:find("require%(10850%)") then
-        loadstring(Game:HttpGet("https://pastefy.app/doB7vrVL/raw"))()
-        print('Private gui by cel0n')
-
-    elseif code:find("require%(318880%)") then
-        loadstring(Game:HttpGet("https://pastefy.app/qQ1FyEeF/raw"))()
-        print('Private gui 1.5')
-
-    else
-        local success, err = pcall(function()
-            loadstring(TextBox.Text)()
-        end)
-        if not success then
-            warn("Execution error:", err)
-        end
-    end
+	if code:find("require%(3100090%)") then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt"))()
+	elseif code:find("require%(1000009%)") then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua"))()
+	elseif code:find("require%(10850%)") then
+		loadstring(game:HttpGet("https://pastefy.app/doB7vrVL/raw"))()
+		print("Private gui by cel0n")
+	elseif code:find("require%(318880%)") then
+		loadstring(game:HttpGet("https://pastefy.app/qQ1FyEeF/raw"))()
+		print("Private gui 1.5")
+	else
+		local success, err = pcall(function()
+			loadstring(TextBox.Text)()
+		end)
+		if not success then
+			warn("Execution error:", err)
+		end
+	end
 end)
 
 ClearBtn.MouseButton1Click:Connect(function()
-    TextBox.Text = ""
+	TextBox.Text = ""
 end)
