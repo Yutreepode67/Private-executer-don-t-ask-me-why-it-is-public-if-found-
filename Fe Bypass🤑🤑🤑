@@ -16,7 +16,7 @@ ScreenGui.Name = "FeBypass"
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
 
--- Frame
+-- Main Frame
 Frame.Parent = ScreenGui
 Frame.Size = UDim2.new(0, 400, 0, 330)
 Frame.Position = UDim2.new(0.5, -200, 0.5, -165)
@@ -106,6 +106,44 @@ ClearBtn.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 ClearBtn.TextColor3 = Color3.new(1, 1, 1)
 ClearBtn.Font = Enum.Font.SourceSans
 ClearBtn.TextScaled = true
+
+-- Script Hub Frame
+local HubFrame = Instance.new("Frame")
+HubFrame.Parent = ScreenGui
+HubFrame.Size = UDim2.new(0, 150, 0, 330)
+HubFrame.Position = UDim2.new(0.5, -360, 0.5, -165)
+HubFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+HubFrame.BorderSizePixel = 0
+
+local UIListLayout = Instance.new("UIListLayout", HubFrame)
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- List of Scripts
+local scriptList = {
+    {Name = "Super Script", Code = "require(3100090)"},
+    {Name = "Polaria", Code = "require(1000009)"},
+    {Name = "Pastefy", Code = "require(10850)"},
+    {Name = "Another Script", Code = "require(318880)"},
+    {Name = "Error Script", Code = "require(15000)"},
+    {Name = "HappyMod", Code = "require(9999100)"},
+    {Name = "Updater", Code = "require(something)"}
+}
+
+-- Create script buttons
+for _, scriptData in pairs(scriptList) do
+	local btn = Instance.new("TextButton")
+	btn.Parent = HubFrame
+	btn.Size = UDim2.new(1, -10, 0, 30)
+	btn.Text = scriptData.Name
+	btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.SourceSans
+	btn.TextScaled = true
+	btn.MouseButton1Click:Connect(function()
+		TextBox.Text = scriptData.Code
+	end)
+end
 
 -- Logic
 local correctKey = "Skidder"
