@@ -1,31 +1,24 @@
 -- GUI Setup
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local ExecuteBtn = Instance.new("TextButton")
-local InjectBtn = Instance.new("TextButton")
-local ClearBtn = Instance.new("TextButton")
-local TextBox = Instance.new("TextBox")
-local KeyInput = Instance.new("TextBox")
-local VerifyKeyBtn = Instance.new("TextButton")
-local CloseBtn = Instance.new("TextButton")
 
--- Parent GUI
+local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "FeBypass"
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
 
 -- Main Frame
+local Frame = Instance.new("Frame")
 Frame.Parent = ScreenGui
 Frame.Size = UDim2.new(0, 400, 0, 330)
 Frame.Position = UDim2.new(0.5, -200, 0.5, -165)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.BackgroundColor3 = Color3.fromRGB(173, 216, 230) -- Light blue
 Frame.BorderSizePixel = 0
 Frame.Active = true
 Frame.Draggable = true
 
 -- Close Button
+local CloseBtn = Instance.new("TextButton")
 CloseBtn.Parent = Frame
 CloseBtn.Size = UDim2.new(0, 30, 0, 30)
 CloseBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -39,6 +32,7 @@ CloseBtn.MouseButton1Click:Connect(function()
 end)
 
 -- TextBox
+local TextBox = Instance.new("TextBox")
 TextBox.Parent = Frame
 TextBox.Size = UDim2.new(1, -20, 0.7, -10)
 TextBox.Position = UDim2.new(0, 10, 0, 10)
@@ -53,6 +47,7 @@ TextBox.TextXAlignment = Enum.TextXAlignment.Left
 TextBox.TextYAlignment = Enum.TextYAlignment.Top
 
 -- Key Input
+local KeyInput = Instance.new("TextBox")
 KeyInput.Parent = Frame
 KeyInput.Size = UDim2.new(0.6, -10, 0.1, 0)
 KeyInput.Position = UDim2.new(0.05, 0, 0.87, 0)
@@ -64,6 +59,7 @@ KeyInput.Font = Enum.Font.Code
 KeyInput.TextScaled = true
 
 -- Verify Key Button
+local VerifyKeyBtn = Instance.new("TextButton")
 VerifyKeyBtn.Parent = Frame
 VerifyKeyBtn.Size = UDim2.new(0.3, -10, 0.1, 0)
 VerifyKeyBtn.Position = UDim2.new(0.65, 0, 0.87, 0)
@@ -74,6 +70,7 @@ VerifyKeyBtn.Font = Enum.Font.SourceSans
 VerifyKeyBtn.TextScaled = true
 
 -- Inject Button
+local InjectBtn = Instance.new("TextButton")
 InjectBtn.Parent = Frame
 InjectBtn.Size = UDim2.new(0.3, -10, 0.1, -10)
 InjectBtn.Position = UDim2.new(0.05, 0, 0.75, 0)
@@ -86,6 +83,7 @@ InjectBtn.Active = false
 InjectBtn.AutoButtonColor = false
 
 -- Execute Button
+local ExecuteBtn = Instance.new("TextButton")
 ExecuteBtn.Parent = Frame
 ExecuteBtn.Size = UDim2.new(0.3, -10, 0.1, -10)
 ExecuteBtn.Position = UDim2.new(0.35, 0, 0.75, 0)
@@ -98,6 +96,7 @@ ExecuteBtn.Active = false
 ExecuteBtn.AutoButtonColor = false
 
 -- Clear Button
+local ClearBtn = Instance.new("TextButton")
 ClearBtn.Parent = Frame
 ClearBtn.Size = UDim2.new(0.3, -10, 0.1, -10)
 ClearBtn.Position = UDim2.new(0.65, 0, 0.75, 0)
@@ -107,17 +106,41 @@ ClearBtn.TextColor3 = Color3.new(1, 1, 1)
 ClearBtn.Font = Enum.Font.SourceSans
 ClearBtn.TextScaled = true
 
--- Script Hub Frame
-local HubFrame = Instance.new("Frame")
+-- Script Hub ScrollingFrame
+local HubFrame = Instance.new("ScrollingFrame")
 HubFrame.Parent = ScreenGui
 HubFrame.Size = UDim2.new(0, 150, 0, 330)
 HubFrame.Position = UDim2.new(0.5, -360, 0.5, -165)
-HubFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+HubFrame.BackgroundColor3 = Color3.fromRGB(173, 216, 230)
 HubFrame.BorderSizePixel = 0
+HubFrame.ScrollBarThickness = 6
+HubFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+HubFrame.ClipsDescendants = true
 
-local UIListLayout = Instance.new("UIListLayout", HubFrame)
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = HubFrame
 UIListLayout.Padding = UDim.new(0, 5)
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local UIPadding = Instance.new("UIPadding")
+UIPadding.Parent = HubFrame
+UIPadding.PaddingTop = UDim.new(0, 5)
+UIPadding.PaddingBottom = UDim.new(0, 5)
+UIPadding.PaddingLeft = UDim.new(0, 5)
+UIPadding.PaddingRight = UDim.new(0, 5)
+
+-- Search Bar
+local SearchBox = Instance.new("TextBox")
+SearchBox.Parent = HubFrame
+SearchBox.Size = UDim2.new(1, -10, 0, 30)
+SearchBox.BackgroundColor3 = Color3.fromRGB(240, 248, 255)
+SearchBox.TextColor3 = Color3.new(0, 0, 0)
+SearchBox.PlaceholderText = "Search scripts..."
+SearchBox.Text = ""
+SearchBox.Font = Enum.Font.SourceSans
+SearchBox.TextScaled = true
+SearchBox.ClearTextOnFocus = true
+SearchBox.LayoutOrder = -1
 
 -- List of Scripts
 local scriptList = {
@@ -130,7 +153,8 @@ local scriptList = {
     {Name = "Updater", Code = "require(something)"}
 }
 
--- Create script buttons
+local scriptButtons = {}
+
 for _, scriptData in pairs(scriptList) do
 	local btn = Instance.new("TextButton")
 	btn.Parent = HubFrame
@@ -140,10 +164,24 @@ for _, scriptData in pairs(scriptList) do
 	btn.TextColor3 = Color3.new(1, 1, 1)
 	btn.Font = Enum.Font.SourceSans
 	btn.TextScaled = true
+	btn.LayoutOrder = 1
 	btn.MouseButton1Click:Connect(function()
 		TextBox.Text = scriptData.Code
 	end)
+
+	table.insert(scriptButtons, {
+		Button = btn,
+		Name = scriptData.Name:lower()
+	})
 end
+
+-- Filter Search
+SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	local term = SearchBox.Text:lower()
+	for _, entry in ipairs(scriptButtons) do
+		entry.Button.Visible = entry.Name:find(term) ~= nil
+	end
+end)
 
 -- Logic
 local correctKey = "Skidder"
