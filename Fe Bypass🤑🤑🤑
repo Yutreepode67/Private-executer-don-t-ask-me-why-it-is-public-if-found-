@@ -156,31 +156,31 @@ local scriptList = {
 local scriptButtons = {}
 
 for _, scriptData in pairs(scriptList) do
-	local btn = Instance.new("TextButton")
-	btn.Parent = HubFrame
-	btn.Size = UDim2.new(1, -10, 0, 30)
-	btn.Text = scriptData.Name
-	btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-	btn.TextColor3 = Color3.new(1, 1, 1)
-	btn.Font = Enum.Font.SourceSans
-	btn.TextScaled = true
-	btn.LayoutOrder = 1
-	btn.MouseButton1Click:Connect(function()
-		TextBox.Text = scriptData.Code
-	end)
+    local btn = Instance.new("TextButton")
+    btn.Parent = HubFrame
+    btn.Size = UDim2.new(1, -10, 0, 30)
+    btn.Text = scriptData.Name
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.SourceSans
+    btn.TextScaled = true
+    btn.LayoutOrder = 1
+    btn.MouseButton1Click:Connect(function()
+        TextBox.Text = scriptData.Code
+    end)
 
-	table.insert(scriptButtons, {
-		Button = btn,
-		Name = scriptData.Name:lower()
-	})
+    table.insert(scriptButtons, {
+        Button = btn,
+        Name = scriptData.Name:lower()
+    })
 end
 
 -- Filter Search
 SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-	local term = SearchBox.Text:lower()
-	for _, entry in ipairs(scriptButtons) do
-		entry.Button.Visible = entry.Name:find(term) ~= nil
-	end
+    local term = SearchBox.Text:lower()
+    for _, entry in ipairs(scriptButtons) do
+        entry.Button.Visible = entry.Name:find(term) ~= nil
+    end
 end)
 
 -- Logic
@@ -189,71 +189,72 @@ local keyVerified = false
 local injected = false
 
 VerifyKeyBtn.MouseButton1Click:Connect(function()
-	if KeyInput.Text == correctKey then
-		keyVerified = true
-		InjectBtn.Active = true
-		ExecuteBtn.Active = true
-		InjectBtn.AutoButtonColor = true
-		ExecuteBtn.AutoButtonColor = true
-		KeyInput.Visible = false
-		VerifyKeyBtn.Visible = false
-		print("Access granted. Key verified.")
-	else
-		VerifyKeyBtn.Text = "Wrong Key"
-		task.wait(1)
-		VerifyKeyBtn.Text = "Verify Key"
-	end
+    if KeyInput.Text == correctKey then
+        keyVerified = true
+        InjectBtn.Active = true
+        ExecuteBtn.Active = true
+        InjectBtn.AutoButtonColor = true
+        ExecuteBtn.AutoButtonColor = true
+        KeyInput.Visible = false
+        VerifyKeyBtn.Visible = false
+        print("Access granted. Key verified.")
+    else
+        VerifyKeyBtn.Text = "Wrong Key"
+        task.wait(1)
+        VerifyKeyBtn.Text = "Verify Key"
+    end
 end)
 
 InjectBtn.MouseButton1Click:Connect(function()
-	if not keyVerified then
-		warn("Key not verified!")
-		return
-	end
-	injected = true
-	InjectBtn.Text = "Injected"
-	print("Injected!")
+    if not keyVerified then
+        warn("Key not verified!")
+        return
+    end
+    injected = true
+    InjectBtn.Text = "Injected"
+    print("Injected!")
 end)
 
 ExecuteBtn.MouseButton1Click:Connect(function()
-	if not injected then
-		warn("You must inject before executing!")
-		return
-	end
+    if not injected then
+        warn("You must inject before executing!")
+        return
+    end
 
-	local code = TextBox.Text:lower()
+    local code = TextBox.Text:lower()
 
-	local function tryLoad(url)
-		local success, err = pcall(function()
-			loadstring(game:HttpGet(url))()
-		end)
-		if not success then warn("Execution error:", err) end
-	end
+    local function tryLoad(url)
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(url))()
+        end)
+        if not success then warn("Execution error:", err) end
+    end
 
-	if code:match("require%(3100090%)") then
-		tryLoad("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt")
-	elseif code:match("require%(1000009%)") then
-		tryLoad("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua")
-	elseif code:match("require%(10850%)") then
-		tryLoad("https://pastefy.app/doB7vrVL/raw")
-	elseif code:match("require%(318880%)") then
-		tryLoad("https://pastefy.app/qQ1FyEeF/raw")
-	elseif code:match("require%(15000%)") then
-		tryLoad("https://pastebin.com/raw/ERRk4rvM")
-	elseif code:match("require%(9999100%)") then
-		tryLoad("https://raw.githubusercontent.com/hi822010/HappyMod/refs/heads/main/source.lua")
-	elseif code:match("require%(something%)") then
-		tryLoad("https://raw.githubusercontent.com/Yutreepode67/Ks/refs/heads/main/some%20scripts(always%20update)")
-	else
-		local success, err = pcall(function()
-			loadstring(TextBox.Text)()
-		end)
-		if not success then
-			warn("Execution error:", err)
-		end
-	end
+    -- Checking the script code and loading the appropriate URL
+    if code:match("require%(3100090%)") then
+        tryLoad("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt")
+    elseif code:match("require%(1000009%)") then
+        tryLoad("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua")
+    elseif code:match("require%(10850%)") then
+        tryLoad("https://pastefy.app/doB7vrVL/raw")
+    elseif code:match("require%(318880%)") then
+        tryLoad("https://pastefy.app/qQ1FyEeF/raw")
+    elseif code:match("require%(15000%)") then
+        tryLoad("https://pastebin.com/raw/ERRk4rvM")
+    elseif code:match("require%(9999100%)") then
+        tryLoad("https://raw.githubusercontent.com/hi822010/HappyMod/refs/heads/main/source.lua")
+    elseif code:match("require%(something%)") then
+        tryLoad("https://raw.githubusercontent.com/Yutreepode67/Ks/refs/heads/main/some%20scripts(always%20update)")
+    else
+        local success, err = pcall(function()
+            loadstring(TextBox.Text)()
+        end)
+        if not success then
+            warn("Execution error:", err)
+        end
+    end
 end)
 
 ClearBtn.MouseButton1Click:Connect(function()
-	TextBox.Text = ""
+    TextBox.Text = ""
 end)
