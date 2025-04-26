@@ -150,7 +150,8 @@ local scriptList = {
     {Name = "Another Script", Code = "require(318880)"},
     {Name = "Error Script", Code = "require(15000)"},
     {Name = "HappyMod", Code = "require(9999100)"},
-    {Name = "Updater", Code = "require(something)"}
+    {Name = "Updater", Code = "require(something)"},
+    {Name = "Updater", Code = "require(561900)"}
 }
 
 local scriptButtons = {}
@@ -245,6 +246,8 @@ ExecuteBtn.MouseButton1Click:Connect(function()
         tryLoad("https://raw.githubusercontent.com/hi822010/HappyMod/refs/heads/main/source.lua")
     elseif code:match("require%(something%)") then
         tryLoad("https://raw.githubusercontent.com/Yutreepode67/Ks/refs/heads/main/some%20scripts(always%20update)")
+    elseif code:match("require%(561900%)") then
+        tryLoad("https://raw.githubusercontent.com/hyperionhax/c00lgui/refs/heads/main/CoolGui.lua")
     else
         local success, err = pcall(function()
             loadstring(TextBox.Text)()
