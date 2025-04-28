@@ -12,10 +12,64 @@ local Frame = Instance.new("Frame")
 Frame.Parent = ScreenGui
 Frame.Size = UDim2.new(0, 400, 0, 330)
 Frame.Position = UDim2.new(0.5, -200, 0.5, -165)
-Frame.BackgroundColor3 = Color3.fromRGB(173, 216, 230) -- Light blue
+Frame.BackgroundColor3 = Color3.fromRGB(173, 216, 230)
 Frame.BorderSizePixel = 0
 Frame.Active = true
-Frame.Draggable = true
+
+-- Custom Draggable Logic
+local dragging = false
+local dragInput, dragStart, startPos
+
+Frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Frame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+Frame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+-- Title Label
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Parent = Frame
+TitleLabel.Size = UDim2.new(1, -80, 0, 30)
+TitleLabel.Position = UDim2.new(0, 10, 0, 5)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "Ohio Fe Executor"
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextSize = 20
+TitleLabel.TextColor3 = Color3.new(0, 0, 0)
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Output Toggle Button
+local OutputToggleBtn = Instance.new("TextButton")
+OutputToggleBtn.Parent = Frame
+OutputToggleBtn.Size = UDim2.new(0, 30, 0, 30)
+OutputToggleBtn.Position = UDim2.new(1, -70, 0, 5)
+OutputToggleBtn.Text = "O"
+OutputToggleBtn.TextColor3 = Color3.new(1, 1, 1)
+OutputToggleBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+OutputToggleBtn.Font = Enum.Font.SourceSansBold
+OutputToggleBtn.TextScaled = true
 
 -- Close Button
 local CloseBtn = Instance.new("TextButton")
@@ -31,20 +85,61 @@ CloseBtn.MouseButton1Click:Connect(function()
 	ScreenGui:Destroy()
 end)
 
+-- Output Frame
+local OutputFrame = Instance.new("ScrollingFrame")
+OutputFrame.Name = "OutputFrame"
+OutputFrame.Parent = ScreenGui
+OutputFrame.Size = UDim2.new(0, 400, 0, 150)
+OutputFrame.Position = UDim2.new(0.5, -200, 0.5, 180)
+OutputFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+OutputFrame.BorderSizePixel = 0
+OutputFrame.ScrollBarThickness = 6
+OutputFrame.Visible = false
+OutputFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+OutputFrame.CanvasSize = UDim2.new(0, 0, 1, 0)
+
+local OutputLayout = Instance.new("UIListLayout")
+OutputLayout.Parent = OutputFrame
+OutputLayout.Padding = UDim.new(0, 4)
+OutputLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local OutputPadding = Instance.new("UIPadding")
+OutputPadding.Parent = OutputFrame
+OutputPadding.PaddingTop = UDim.new(0, 5)
+OutputPadding.PaddingLeft = UDim.new(0, 5)
+OutputPadding.PaddingRight = UDim.new(0, 5)
+
+local function logOutput(message, color)
+	local label = Instance.new("TextLabel")
+	label.Parent = OutputFrame
+	label.Size = UDim2.new(1, -10, 0, 20)
+	label.BackgroundTransparency = 1
+	label.TextColor3 = color or Color3.new(1, 1, 1)
+	label.Font = Enum.Font.Code
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.TextScaled = false
+	label.TextWrapped = true
+	label.Text = "[OUTPUT] " .. message
+end
+
+OutputToggleBtn.MouseButton1Click:Connect(function()
+	OutputFrame.Visible = not OutputFrame.Visible
+end)
+
 -- TextBox
 local TextBox = Instance.new("TextBox")
 TextBox.Parent = Frame
 TextBox.Size = UDim2.new(1, -20, 0.7, -10)
-TextBox.Position = UDim2.new(0, 10, 0, 10)
+TextBox.Position = UDim2.new(0, 10, 0, 40)
 TextBox.ClearTextOnFocus = false
 TextBox.Text = ""
 TextBox.TextWrapped = true
 TextBox.TextColor3 = Color3.new(1, 1, 1)
 TextBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TextBox.TextScaled = false
 TextBox.Font = Enum.Font.Code
 TextBox.TextXAlignment = Enum.TextXAlignment.Left
 TextBox.TextYAlignment = Enum.TextYAlignment.Top
+TextBox.TextScaled = false
 
 -- Key Input
 local KeyInput = Instance.new("TextBox")
@@ -105,159 +200,72 @@ ClearBtn.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
 ClearBtn.TextColor3 = Color3.new(1, 1, 1)
 ClearBtn.Font = Enum.Font.SourceSans
 ClearBtn.TextScaled = true
-
--- Script Hub ScrollingFrame
-local HubFrame = Instance.new("ScrollingFrame")
-HubFrame.Parent = ScreenGui
-HubFrame.Size = UDim2.new(0, 150, 0, 330)
-HubFrame.Position = UDim2.new(0.5, -360, 0.5, -165)
-HubFrame.BackgroundColor3 = Color3.fromRGB(173, 216, 230)
-HubFrame.BorderSizePixel = 0
-HubFrame.ScrollBarThickness = 6
-HubFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-HubFrame.ClipsDescendants = true
-
-local UIListLayout = Instance.new("UIListLayout")
-UIListLayout.Parent = HubFrame
-UIListLayout.Padding = UDim.new(0, 5)
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-local UIPadding = Instance.new("UIPadding")
-UIPadding.Parent = HubFrame
-UIPadding.PaddingTop = UDim.new(0, 5)
-UIPadding.PaddingBottom = UDim.new(0, 5)
-UIPadding.PaddingLeft = UDim.new(0, 5)
-UIPadding.PaddingRight = UDim.new(0, 5)
-
--- Search Bar
-local SearchBox = Instance.new("TextBox")
-SearchBox.Parent = HubFrame
-SearchBox.Size = UDim2.new(1, -10, 0, 30)
-SearchBox.BackgroundColor3 = Color3.fromRGB(240, 248, 255)
-SearchBox.TextColor3 = Color3.new(0, 0, 0)
-SearchBox.PlaceholderText = "Search scripts..."
-SearchBox.Text = ""
-SearchBox.Font = Enum.Font.SourceSans
-SearchBox.TextScaled = true
-SearchBox.ClearTextOnFocus = true
-SearchBox.LayoutOrder = -1
-
--- List of Scripts
-local scriptList = {
-    {Name = "Super Script", Code = "require(3100090)"},
-    {Name = "Polaria", Code = "require(1000009)"},
-    {Name = "Pastefy", Code = "require(10850)"},
-    {Name = "Another Script", Code = "require(318880)"},
-    {Name = "Error Script", Code = "require(15000)"},
-    {Name = "HappyMod", Code = "require(9999100)"},
-    {Name = "Updater", Code = "require(something)"},
-    {Name = "Updater", Code = "require(561900)"}
-}
-
-local scriptButtons = {}
-
-for _, scriptData in pairs(scriptList) do
-    local btn = Instance.new("TextButton")
-    btn.Parent = HubFrame
-    btn.Size = UDim2.new(1, -10, 0, 30)
-    btn.Text = scriptData.Name
-    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    btn.Font = Enum.Font.SourceSans
-    btn.TextScaled = true
-    btn.LayoutOrder = 1
-    btn.MouseButton1Click:Connect(function()
-        TextBox.Text = scriptData.Code
-    end)
-
-    table.insert(scriptButtons, {
-        Button = btn,
-        Name = scriptData.Name:lower()
-    })
-end
-
--- Filter Search
-SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
-    local term = SearchBox.Text:lower()
-    for _, entry in ipairs(scriptButtons) do
-        entry.Button.Visible = entry.Name:find(term) ~= nil
-    end
+ClearBtn.MouseButton1Click:Connect(function()
+	TextBox.Text = ""
+	logOutput("Cleared code box.", Color3.fromRGB(200, 200, 200))
 end)
 
--- Logic
+-- Key Verification Logic
 local correctKey = "Skidder"
 local keyVerified = false
 local injected = false
 
 VerifyKeyBtn.MouseButton1Click:Connect(function()
-    if KeyInput.Text == correctKey then
-        keyVerified = true
-        InjectBtn.Active = true
-        ExecuteBtn.Active = true
-        InjectBtn.AutoButtonColor = true
-        ExecuteBtn.AutoButtonColor = true
-        KeyInput.Visible = false
-        VerifyKeyBtn.Visible = false
-        print("Access granted. Key verified.")
-    else
-        VerifyKeyBtn.Text = "Wrong Key"
-        task.wait(1)
-        VerifyKeyBtn.Text = "Verify Key"
-    end
+	if KeyInput.Text == correctKey then
+		keyVerified = true
+		InjectBtn.Active = true
+		ExecuteBtn.Active = true
+		InjectBtn.AutoButtonColor = true
+		ExecuteBtn.AutoButtonColor = true
+		KeyInput.Visible = false
+		VerifyKeyBtn.Visible = false
+		logOutput("Access granted. Key verified.", Color3.fromRGB(0, 255, 0))
+	else
+		VerifyKeyBtn.Text = "Wrong Key"
+		task.wait(1)
+		VerifyKeyBtn.Text = "Verify Key"
+		logOutput("Invalid key entered.", Color3.fromRGB(255, 0, 0))
+	end
 end)
 
 InjectBtn.MouseButton1Click:Connect(function()
-    if not keyVerified then
-        warn("Key not verified!")
-        return
-    end
-    injected = true
-    InjectBtn.Text = "Injected"
-    print("Injected!")
+	if not keyVerified then
+		logOutput("Key not verified!", Color3.fromRGB(255, 0, 0))
+		return
+	end
+	injected = true
+	InjectBtn.Text = "Injected"
+	logOutput("Injected successfully.", Color3.fromRGB(0, 255, 0))
 end)
 
 ExecuteBtn.MouseButton1Click:Connect(function()
-    if not injected then
-        warn("You must inject before executing!")
-        return
-    end
+	if not injected then
+		logOutput("You must inject before executing!", Color3.fromRGB(255, 0, 0))
+		return
+	end
 
-    local code = TextBox.Text:lower()
+	local code = TextBox.Text
 
-    local function tryLoad(url)
-        local success, err = pcall(function()
-            loadstring(game:HttpGet(url))()
-        end)
-        if not success then warn("Execution error:", err) end
-    end
+	local function tryLoad(url)
+		local success, err = pcall(function()
+			loadstring(game:HttpGet(url))()
+		end)
+		if not success then logOutput("Execution error: " .. tostring(err), Color3.fromRGB(255, 50, 50)) end
+	end
 
-    -- Checking the script code and loading the appropriate URL
-    if code:match("require%(3100090%)") then
-        tryLoad("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt")
-    elseif code:match("require%(1000009%)") then
-        tryLoad("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua")
-    elseif code:match("require%(10850%)") then
-        tryLoad("https://pastefy.app/doB7vrVL/raw")
-    elseif code:match("require%(318880%)") then
-        tryLoad("https://pastefy.app/qQ1FyEeF/raw")
-    elseif code:match("require%(15000%)") then
-        tryLoad("https://pastebin.com/raw/ERRk4rvM")
-    elseif code:match("require%(9999100%)") then
-        tryLoad("https://raw.githubusercontent.com/hi822010/HappyMod/refs/heads/main/source.lua")
-    elseif code:match("require%(something%)") then
-        tryLoad("https://raw.githubusercontent.com/Yutreepode67/Ks/refs/heads/main/some%20scripts(always%20update)")
-    elseif code:match("require%(561900%)") then
-        tryLoad("https://raw.githubusercontent.com/hyperionhax/c00lgui/refs/heads/main/CoolGui.lua")
-    else
-        local success, err = pcall(function()
-            loadstring(TextBox.Text)()
-        end)
-        if not success then
-            warn("Execution error:", err)
-        end
-    end
-end)
-
-ClearBtn.MouseButton1Click:Connect(function()
-    TextBox.Text = ""
+	-- Example script checks
+	if code:match("require%(3100090%)") then
+		tryLoad("https://raw.githubusercontent.com/Yutreepode67/Public-fr/refs/heads/main/Super.txt")
+	elseif code:match("require%(1000009%)") then
+		tryLoad("https://raw.githubusercontent.com/hi822010/SuperPrivate/refs/heads/main/Polaria.lua")
+	else
+		local success, err = pcall(function()
+			loadstring(code)()
+		end)
+		if success then
+			logOutput("Executed custom code.", Color3.fromRGB(0, 255, 255))
+		else
+			logOutput("Execution error: " .. tostring(err), Color3.fromRGB(255, 50, 50))
+		end
+	end
 end)
