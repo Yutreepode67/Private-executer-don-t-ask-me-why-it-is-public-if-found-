@@ -1,0 +1,114 @@
+-- Wait for LocalPlayer
+local player = game:GetService("Players").LocalPlayer
+
+-- Create GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "IdFedExecutor"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Init Saved Scripts Table
+getgenv().SavedUiScripts = getgenv().SavedUiScripts or {}
+
+-- Create Main Frame
+local main = Instance.new("Frame")
+main.Name = "Main"
+main.Size = UDim2.new(0, 400, 0, 250)
+main.Position = UDim2.new(0.5, -200, 0.5, -125)
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+main.Parent = gui
+
+-- Title Label
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "IdFed Injection Executor V1.0 by @SH00WKID"
+title.Font = Enum.Font.Code
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 18
+title.BackgroundTransparency = 1
+title.Parent = main
+
+-- Script Input Box
+local input = Instance.new("TextBox")
+input.Name = "ScriptInput"
+input.Size = UDim2.new(1, -20, 0, 150)
+input.Position = UDim2.new(0, 10, 0, 45)
+input.MultiLine = true
+input.ClearTextOnFocus = false
+input.Text = ""
+input.PlaceholderText = "Type your script here..."
+input.Font = Enum.Font.Code
+input.TextSize = 14
+input.TextColor3 = Color3.fromRGB(0, 255, 0)
+input.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+input.BorderSizePixel = 0
+input.TextWrapped = true
+input.TextXAlignment = Enum.TextXAlignment.Left
+input.TextYAlignment = Enum.TextYAlignment.Top
+input.Parent = main
+
+-- Tip Label
+local tip = Instance.new("TextLabel")
+tip.Name = "TipLabel"
+tip.Size = UDim2.new(1, 0, 0, 40)
+tip.Position = UDim2.new(0, 0, 1, -40)
+tip.Text = "Say: !Inject | !Execute | !Save [name] | !Load [name] | !List"
+tip.Font = Enum.Font.Code
+tip.TextSize = 14
+tip.TextColor3 = Color3.fromRGB(180, 180, 180)
+tip.BackgroundTransparency = 1
+tip.TextScaled = true
+tip.Parent = main
+
+-- Script Logic
+local injected = false
+local storedScript = ""
+
+player.Chatted:Connect(function(msg)
+	local args = msg:split(" ")
+	local command = args[1]:lower()
+
+	if command == "!inject" then
+		storedScript = input.Text
+		injected = true
+		warn("[IdFed] Script injected.")
+
+	elseif command == "!execute" then
+		if injected and storedScript ~= "" then
+			local func, err = loadstring(storedScript)
+			if func then
+				pcall(func)
+				warn("[IdFed] Script executed.")
+			else
+				warn("[IdFed] Error: " .. tostring(err))
+			end
+		else
+			warn("[IdFed] No script injected.")
+		end
+
+	elseif command == "!save" and args[2] then
+		local name = args[2]
+		getgenv().SavedUiScripts[name] = input.Text
+		warn("[IdFed] Script saved as '" .. name .. "'.")
+
+	elseif command == "!load" and args[2] then
+		local name = args[2]
+		if getgenv().SavedUiScripts[name] then
+			input.Text = getgenv().SavedUiScripts[name]
+			warn("[IdFed] Loaded script '" .. name .. "'.")
+		else
+			warn("[IdFed] No script found with name '" .. name .. "'.")
+		end
+
+	elseif command == "!list" then
+		warn("[IdFed] Saved Scripts:")
+		for name, _ in pairs(getgenv().SavedUiScripts) do
+			warn("- " .. name)
+		end
+	end
+end)
